@@ -121,7 +121,7 @@ void RunServer()
   Diu diu03 = Diu(server, idx, 3);
   Diu diu04 = Diu(server, idx, 4);
 
-  #if 0
+  #if 1
   //Create our address space using different methods
   Node objects = server.GetObjectsNode();
 
@@ -160,21 +160,22 @@ void RunServer()
 
   //Create event
   server.EnableEventNotification();
-  //Event ev(ObjectId::BaseEventType); //you should create your own type
-  //ev.Severity = 2;
-  //ev.SourceNode = ObjectId::Server;
-  //ev.SourceName = "Event from FreeOpcUA";
-  //ev.Time = DateTime::Current();
+  Event ev(ObjectId::BaseEventType); //you should create your own type
+  ev.Severity = 2;
+  ev.SourceNode = ObjectId::Server;
+  ev.SourceName = "Event from FreeOpcUA";
+  ev.Time = DateTime::Current();
 
 
   std::cout << "Ctrl-C to exit" << std::endl;
   for (;;)
   {
     diu01.SetLocalValue(++counter); //will change value and trigger datachange event
-    std::stringstream ss;
+	myvar.SetValue(Variant(++counter)); //will change value and trigger datachange event
+	std::stringstream ss;
     ss << "This is event number: " << counter;
-   // ev.Message = LocalizedText(ss.str());
-   // server.TriggerEvent(ev);
+    ev.Message = LocalizedText(ss.str());
+    server.TriggerEvent(ev);
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
   }
 
